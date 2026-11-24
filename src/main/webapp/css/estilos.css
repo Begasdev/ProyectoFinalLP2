@@ -1,0 +1,10 @@
+body { font-family: Arial, sans-serif; margin: 20px; }
+h1 { color: #0875df; }
+table { border-collapse: collapse; width: 100%; margin-top: 10px; }
+th, td { border: 1px solid #ccc; padding: 8px; }
+th { background: #f0f0f0; }
+a { color: #0875df; text-decoration: none; }
+.mensaje-error { color: red; margin: 10px 0; }
+.formulario { max-width: 600px; }
+.grupo-campo { margin: 8px 0; }
+button { padding: 8px 16px; }
