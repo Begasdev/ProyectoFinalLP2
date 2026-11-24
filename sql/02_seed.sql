@@ -18,8 +18,8 @@ GO
 IF NOT EXISTS (SELECT 1 FROM dbo.Usuario)
 BEGIN
     INSERT INTO dbo.Usuario (IdRol, NombreCompleto, NombreUsuario, Clave, ResetearClave, Activo) VALUES
-        (1, N'Administrador del Sistema', N'admin',     N'$2b$10$WIfQuv4zCzWwIgA70IRyAurCEKP8/Mc1CDXxVzDk7D24aneF80Y.q', 0, 1),
-        (2, N'Empleado de Prueba',       N'empleado', N'$2b$10$gDeEOC2c.Qv4itj1/ImNy.Boz.wGzB9AFb9QFahSdbw8EBUjNynb.', 1, 1);
+        (1, N'Administrador del Sistema', N'admin',     N'$2a$10$/PBYfuSgMIkDb9IL9ytG7.lzsfcV8FCEvMFITGwel2KyXgPLAZWg6', 0, 1),
+        (2, N'Empleado de Prueba',       N'empleado', N'$2a$10$tcbldyQoJEJihL/VfhwEXubPD9BjzkRY1Gc2kifn/052PitoClICK', 1, 1);
 END
 GO
 
