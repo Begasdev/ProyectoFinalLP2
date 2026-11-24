@@ -5,30 +5,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ProyectoFinalLP2 - Iniciar sesión</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/estilos.css">
 </head>
-<body>
-<main>
-    <section class="formulario">
-        <header class="encabezado">
-            <div class="marca-texto">
-                <h1>ProyectoFinalLP2</h1>
-                <p>Sistema de Gestión de Inventario</p>
+<body class="bg-light">
+<div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-5">
+            <div class="card shadow">
+                <div class="card-body p-4">
+                    <h3 class="text-center mb-3">ProyectoFinalLP2</h3>
+                    <p class="text-center text-muted">Sistema de Gestión de Inventario</p>
+                    <% if (request.getAttribute("error") != null) { %>
+                    <div class="alert alert-danger"><%= request.getAttribute("error") %></div>
+                    <% } %>
+                    <form action="${pageContext.request.contextPath}/login" method="post">
+                        <div class="mb-3">
+                            <label class="form-label">Usuario</label>
+                            <input type="text" name="nombreUsuario" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Contraseña</label>
+                            <input type="password" name="clave" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Ingresar</button>
+                    </form>
+                </div>
             </div>
-        </header>
-        <% if (request.getAttribute("error") != null) { %>
-        <div class="mensaje-error"><%= request.getAttribute("error") %></div>
-        <% } %>
-        <form action="${pageContext.request.contextPath}/login" method="post">
-            <div class="grupo-campo">
-                <input type="text" name="nombreUsuario" placeholder="Usuario" required>
-            </div>
-            <div class="grupo-campo">
-                <input type="password" name="clave" placeholder="Contraseña" required>
-            </div>
-            <button type="submit">Ingresar</button>
-        </form>
-    </section>
-</main>
+        </div>
+    </div>
+</div>
 </body>
 </html>
