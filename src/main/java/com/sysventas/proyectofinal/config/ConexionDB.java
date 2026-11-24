@@ -13,6 +13,16 @@ public class ConexionDB {
         String usr = System.getenv("DB_USER");
         String pwd = System.getenv("DB_PASSWORD");
 
+        // Si la URL activa encrypt pero no confía en el certificado del servidor,
+        // se agrega trustServerCertificate=true para evitar errores de PKIX en desarrollo.
+        if (url != null && url.contains("encrypt=true") && !url.contains("trustServerCertificate")) {
+            url = url + ";trustServerCertificate=true";
+        }
+        // URL por defecto si no se configuró la variable de entorno.
+        if (url == null || url.isBlank()) {
+            url = "jdbc:sqlserver://localhost:1433;databaseName=ProyectoFinalLP2;encrypt=true;trustServerCertificate=true";
+        }
+
         System.out.println("------------------------------------------");
         System.out.println(" VERIFICACION DE CONEXION SQL SERVER ");
         System.out.println("------------------------------------------");

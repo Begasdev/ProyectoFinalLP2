@@ -27,7 +27,7 @@ Usuarios de prueba:
 ## Ejecución
 
 1. Configurar variables de entorno en IntelliJ/Tomcat:
-   - `DB_URL=jdbc:sqlserver://localhost;instanceName=SQLEXPRESS;databaseName=ProyectoFinalLP2;encrypt=true;trustServerCertificate=true`
+   - `DB_URL=jdbc:sqlserver://localhost:1433;databaseName=ProyectoFinalLP2;encrypt=true;trustServerCertificate=true`
    - `DB_USER=sa` (o tu usuario)
    - `DB_PASSWORD=tu_contraseña`
 2. Ejecutar `ProbarConexion` para verificar conexión.
