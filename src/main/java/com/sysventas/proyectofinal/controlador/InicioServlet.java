@@ -5,6 +5,7 @@ import com.sysventas.proyectofinal.dao.ClienteDAO;
 import com.sysventas.proyectofinal.dao.ProductoDAO;
 import com.sysventas.proyectofinal.dao.ProveedorDAO;
 import com.sysventas.proyectofinal.dao.UnidadMedidaDAO;
+import com.sysventas.proyectofinal.model.Producto;
 import com.sysventas.proyectofinal.model.Usuario;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -15,6 +16,7 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 
 @WebServlet("/inicio")
 public class InicioServlet extends HttpServlet {
@@ -32,6 +34,12 @@ public class InicioServlet extends HttpServlet {
             request.setAttribute("nProductos", new ProductoDAO().listar().size());
             request.setAttribute("nClientes", new ClienteDAO().listar().size());
             request.setAttribute("nProveedores", new ProveedorDAO().listar().size());
+
+            ProductoDAO pdao = new ProductoDAO();
+            request.setAttribute("stockBajo", pdao.contarStockBajo(ProductoServlet.STOCK_MINIMO));
+            request.setAttribute("agotados", pdao.contarAgotados());
+            request.setAttribute("valorInventario", pdao.valorInventario());
+            request.setAttribute("menosStock", pdao.listarMenosStock(5));
         } catch (SQLException e) {
             getServletContext().log("Error cargando métricas", e);
         }

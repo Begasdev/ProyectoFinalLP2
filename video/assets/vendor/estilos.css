@@ -1,0 +1,236 @@
+/* Tema estilo Apple para Bootstrap 5.3.3.
+   Cargar DESPUÉS de bootstrap.min.css para que estas reglas ganen. */
+
+/* ---------- 1. Variables ---------- */
+:root {
+    --apple-blue: #0071e3;
+    --apple-blue-hover: #0077ed;
+    --apple-blue-active: #006edb;
+    --apple-gray: #f5f5f7;
+    --apple-dark: #1d1d1f;
+    --apple-muted: #6e6e73;
+    --apple-border: #d2d2d7;
+    --apple-row-hover: #f0f0f5;
+    --apple-head-bg: #fafafc;
+
+    --radius: 12px;
+    --radius-sm: 8px;
+    --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.06);
+    --shadow-card-hover: 0 8px 30px rgba(0, 0, 0, 0.1);
+    --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+
+    /* Reemplaza el azul de Bootstrap para que text-primary, enlaces y
+       demás utilidades usen el mismo azul que los botones. */
+    --bs-primary: #0071e3;
+    --bs-primary-rgb: 0, 113, 227;
+    --bs-link-color-rgb: 0, 113, 227;
+    --bs-link-hover-color-rgb: 0, 119, 237;
+}
+
+/* ---------- 2. Base ---------- */
+body.bg-apple {
+    background-color: var(--apple-gray);
+    color: var(--apple-dark);
+    font-family: sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- 3. Tarjetas ----------
+   .apple-card es estática. Solo se eleva al pasar el mouse la que
+   lleva además .module-card, es decir, la que funciona como enlace. */
+.apple-card {
+    border: none;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-card);
+    background: #fff;
+}
+
+.module-card {
+    transition: transform 0.25s var(--ease), box-shadow 0.25s var(--ease);
+}
+
+.module-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-card-hover);
+}
+
+/* ---------- 4. Animación de entrada ----------
+   Con fill-mode "both" o "forwards" el último fotograma queda fijo y
+   anula cualquier transform posterior, como el del :hover. Con
+   "backwards" solo se aplica el estado inicial antes de empezar. */
+.fade-in {
+    animation: fadeIn 0.6s var(--ease) backwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ---------- 5. Barra de navegación ----------
+   El blur solo se nota con fondo translúcido. bg-white de Bootstrap usa
+   --bs-bg-opacity, así que se baja la opacidad sin tocar el HTML. */
+.navbar.bg-white {
+    --bs-bg-opacity: 0.8;
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    backdrop-filter: saturate(180%) blur(20px);
+}
+
+/* ---------- 6. Botones ----------
+   Se redefinen las variables de Bootstrap para que también cambien
+   los estados :active, :focus y :disabled, no solo el normal. */
+.btn {
+    border-radius: 980px;
+    font-weight: 500;
+    transition: background-color 0.2s var(--ease),
+        border-color 0.2s var(--ease),
+        box-shadow 0.2s var(--ease),
+        transform 0.2s var(--ease);
+}
+
+.btn:not(:disabled):not(.disabled):hover {
+    transform: scale(1.02);
+}
+
+.btn:not(:disabled):not(.disabled):active {
+    transform: scale(0.98);
+}
+
+.btn-primary {
+    --bs-btn-bg: var(--apple-blue);
+    --bs-btn-border-color: var(--apple-blue);
+    --bs-btn-hover-bg: var(--apple-blue-hover);
+    --bs-btn-hover-border-color: var(--apple-blue-hover);
+    --bs-btn-active-bg: var(--apple-blue-active);
+    --bs-btn-active-border-color: var(--apple-blue-active);
+    --bs-btn-disabled-bg: var(--apple-blue);
+    --bs-btn-disabled-border-color: var(--apple-blue);
+    --bs-btn-focus-shadow-rgb: 0, 113, 227;
+}
+
+/* ---------- 7. Tablas ----------
+   El redondeo va en .table-responsive y no en la tabla, porque con
+   border-collapse un border-radius sobre <table> no se aplica bien.
+   Si la tabla ya está dentro de una .card, la tarjeta pone el fondo. */
+.table-responsive {
+    border-radius: var(--radius);
+    background: #fff;
+    box-shadow: var(--shadow-card);
+}
+
+.card .table-responsive {
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.table {
+    margin-bottom: 0;
+}
+
+.table thead th {
+    background-color: var(--apple-head-bg);
+    color: var(--apple-muted);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--apple-border);
+    padding: 0.85rem 1rem;
+}
+
+.table tbody td {
+    padding: 0.9rem 1rem;
+    vertical-align: middle;
+}
+
+.table tbody tr {
+    transition: background-color 0.15s var(--ease);
+}
+
+/* En Bootstrap 5.3 las celdas pintan su propio fondo con --bs-table-bg,
+   así que el hover se aplica cambiando esa variable en la fila. */
+.table tbody tr:hover {
+    --bs-table-bg: var(--apple-row-hover);
+}
+
+/* ---------- 8. Formularios ---------- */
+.form-control,
+.form-select {
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--apple-border);
+    padding: 0.65rem 0.85rem;
+    transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease);
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--apple-blue);
+    box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.15);
+}
+
+.input-group-text {
+    border-color: var(--apple-border);
+}
+
+.form-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+/* ---------- 9. Alertas ---------- */
+.alert {
+    border-radius: var(--radius);
+}
+
+/* Clases para anchos de formulario (reemplazo de estilos en línea) */
+.login-wrapper {
+    min-height: 100vh;
+}
+
+.form-card {
+    max-width: 600px;
+}
+
+.form-card-wide {
+    max-width: 700px;
+}
+
+.form-card-narrow {
+    max-width: 420px;
+}
+
+/* Validación Bootstrap */
+.was-validated .form-control:invalid,
+.was-validated .form-select:invalid {
+    border-color: #dc3545;
+}
+
+.was-validated .form-control:valid,
+.was-validated .form-select:valid {
+    border-color: #198754;
+}
+
+/* ---------- 10. Accesibilidad ---------- */
+a:focus-visible,
+.btn:focus-visible {
+    outline: 2px solid var(--apple-blue);
+    outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}

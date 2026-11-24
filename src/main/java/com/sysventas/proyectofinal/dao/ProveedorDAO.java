@@ -13,24 +13,62 @@ import java.util.List;
 public class ProveedorDAO {
 
     public List<Proveedor> listar() throws SQLException {
+        return listar(null, 1, Integer.MAX_VALUE);
+    }
+
+    public List<Proveedor> listar(String q, int pagina, int tamanoPagina) throws SQLException {
         List<Proveedor> lista = new ArrayList<>();
-        String sql = "SELECT IdProveedor, NombreEmpresa, Contacto, Telefono, Email, Direccion, Activo FROM Proveedor ORDER BY IdProveedor";
+        StringBuilder sql = new StringBuilder(
+            "SELECT IdProveedor, NombreEmpresa, Contacto, Telefono, Email, Direccion, Activo " +
+            "FROM Proveedor WHERE 1=1 ");
+        if (q != null && !q.isBlank()) sql.append("AND (NombreEmpresa LIKE ? OR Contacto LIKE ? OR Email LIKE ?) ");
+        sql.append("ORDER BY IdProveedor OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
         try (Connection cn = ConexionDB.getConexion();
-             PreparedStatement ps = cn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                Proveedor p = new Proveedor();
-                p.setIdProveedor(rs.getInt("IdProveedor"));
-                p.setNombreEmpresa(rs.getString("NombreEmpresa"));
-                p.setContacto(rs.getString("Contacto"));
-                p.setTelefono(rs.getString("Telefono"));
-                p.setEmail(rs.getString("Email"));
-                p.setDireccion(rs.getString("Direccion"));
-                p.setActivo(rs.getBoolean("Activo"));
-                lista.add(p);
+             PreparedStatement ps = cn.prepareStatement(sql.toString())) {
+            int idx = 1;
+            if (q != null && !q.isBlank()) {
+                String like = "%" + q + "%";
+                ps.setString(idx++, like);
+                ps.setString(idx++, like);
+                ps.setString(idx++, like);
+            }
+            int offset = (pagina - 1) * tamanoPagina;
+            ps.setInt(idx++, offset);
+            ps.setInt(idx++, tamanoPagina);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Proveedor p = new Proveedor();
+                    p.setIdProveedor(rs.getInt("IdProveedor"));
+                    p.setNombreEmpresa(rs.getString("NombreEmpresa"));
+                    p.setContacto(rs.getString("Contacto"));
+                    p.setTelefono(rs.getString("Telefono"));
+                    p.setEmail(rs.getString("Email"));
+                    p.setDireccion(rs.getString("Direccion"));
+                    p.setActivo(rs.getBoolean("Activo"));
+                    lista.add(p);
+                }
             }
         }
         return lista;
+    }
+
+    public int contar(String q) throws SQLException {
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM Proveedor WHERE 1=1 ");
+        if (q != null && !q.isBlank()) sql.append("AND (NombreEmpresa LIKE ? OR Contacto LIKE ? OR Email LIKE ?) ");
+        try (Connection cn = ConexionDB.getConexion();
+             PreparedStatement ps = cn.prepareStatement(sql.toString())) {
+            int idx = 1;
+            if (q != null && !q.isBlank()) {
+                String like = "%" + q + "%";
+                ps.setString(idx++, like);
+                ps.setString(idx++, like);
+                ps.setString(idx++, like);
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getInt(1);
+            }
+        }
+        return 0;
     }
 
     public void insertar(Proveedor p) throws SQLException {

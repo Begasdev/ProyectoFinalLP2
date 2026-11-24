@@ -1,0 +1,38 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%
+    Boolean navbarMinimo = (Boolean) request.getAttribute("navbarMinimo");
+    if (navbarMinimo == null) navbarMinimo = (Boolean) pageContext.getAttribute("navbarMinimo");
+    if (navbarMinimo == null) navbarMinimo = Boolean.FALSE;
+    String seccion = (String) request.getAttribute("seccion");
+    if (seccion == null) seccion = (String) pageContext.getAttribute("seccion");
+    if (seccion == null) seccion = "";
+%>
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+    <div class="container">
+        <a class="navbar-brand fw-bold text-primary" href="${pageContext.request.contextPath}/inicio">
+            <i class="fa-solid fa-cart-shopping me-2"></i>ProyectoFinalLP2
+        </a>
+        <% if (!navbarMinimo) { %>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="nav">
+            <ul class="navbar-nav ms-auto align-items-center">
+                <li class="nav-item"><a class="nav-link <%= "unidades".equals(seccion) ? "active fw-bold" : "" %>" href="${pageContext.request.contextPath}/unidades"><i class="fa-solid fa-ruler me-1"></i>Unidades</a></li>
+                <li class="nav-item"><a class="nav-link <%= "categorias".equals(seccion) ? "active fw-bold" : "" %>" href="${pageContext.request.contextPath}/categorias"><i class="fa-solid fa-tags me-1"></i>Categorías</a></li>
+                <li class="nav-item"><a class="nav-link <%= "productos".equals(seccion) ? "active fw-bold" : "" %>" href="${pageContext.request.contextPath}/productos"><i class="fa-solid fa-box me-1"></i>Productos</a></li>
+                <li class="nav-item"><a class="nav-link <%= "clientes".equals(seccion) ? "active fw-bold" : "" %>" href="${pageContext.request.contextPath}/clientes"><i class="fa-solid fa-users me-1"></i>Clientes</a></li>
+                <li class="nav-item"><a class="nav-link <%= "proveedores".equals(seccion) ? "active fw-bold" : "" %>" href="${pageContext.request.contextPath}/proveedores"><i class="fa-solid fa-truck me-1"></i>Proveedores</a></li>
+                <li class="nav-item ms-3">
+                    <span class="text-muted small"><i class="fa-solid fa-user me-1"></i><c:out value="${sessionScope.usuario.nombreCompleto}" /></span>
+                </li>
+                <li class="nav-item ms-2">
+                    <a href="${pageContext.request.contextPath}/logout" class="btn btn-outline-danger btn-sm"><i class="fa-solid fa-right-from-bracket"></i></a>
+                </li>
+            </ul>
+        </div>
+        <% } %>
+    </div>
+</nav>
+<%@ include file="/WEB-INF/fragmentos/toast.jspf" %>

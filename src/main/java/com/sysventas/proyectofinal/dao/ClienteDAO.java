@@ -13,24 +13,62 @@ import java.util.List;
 public class ClienteDAO {
 
     public List<Cliente> listar() throws SQLException {
+        return listar(null, 1, Integer.MAX_VALUE);
+    }
+
+    public List<Cliente> listar(String q, int pagina, int tamanoPagina) throws SQLException {
         List<Cliente> lista = new ArrayList<>();
-        String sql = "SELECT IdCliente, Nombre, Apellido, Telefono, Email, Direccion, Activo FROM Cliente ORDER BY IdCliente";
+        StringBuilder sql = new StringBuilder(
+            "SELECT IdCliente, Nombre, Apellido, Telefono, Email, Direccion, Activo " +
+            "FROM Cliente WHERE 1=1 ");
+        if (q != null && !q.isBlank()) sql.append("AND (Nombre LIKE ? OR Apellido LIKE ? OR Email LIKE ?) ");
+        sql.append("ORDER BY IdCliente OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
         try (Connection cn = ConexionDB.getConexion();
-             PreparedStatement ps = cn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                Cliente c = new Cliente();
-                c.setIdCliente(rs.getInt("IdCliente"));
-                c.setNombre(rs.getString("Nombre"));
-                c.setApellido(rs.getString("Apellido"));
-                c.setTelefono(rs.getString("Telefono"));
-                c.setEmail(rs.getString("Email"));
-                c.setDireccion(rs.getString("Direccion"));
-                c.setActivo(rs.getBoolean("Activo"));
-                lista.add(c);
+             PreparedStatement ps = cn.prepareStatement(sql.toString())) {
+            int idx = 1;
+            if (q != null && !q.isBlank()) {
+                String like = "%" + q + "%";
+                ps.setString(idx++, like);
+                ps.setString(idx++, like);
+                ps.setString(idx++, like);
+            }
+            int offset = (pagina - 1) * tamanoPagina;
+            ps.setInt(idx++, offset);
+            ps.setInt(idx++, tamanoPagina);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Cliente c = new Cliente();
+                    c.setIdCliente(rs.getInt("IdCliente"));
+                    c.setNombre(rs.getString("Nombre"));
+                    c.setApellido(rs.getString("Apellido"));
+                    c.setTelefono(rs.getString("Telefono"));
+                    c.setEmail(rs.getString("Email"));
+                    c.setDireccion(rs.getString("Direccion"));
+                    c.setActivo(rs.getBoolean("Activo"));
+                    lista.add(c);
+                }
             }
         }
         return lista;
+    }
+
+    public int contar(String q) throws SQLException {
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM Cliente WHERE 1=1 ");
+        if (q != null && !q.isBlank()) sql.append("AND (Nombre LIKE ? OR Apellido LIKE ? OR Email LIKE ?) ");
+        try (Connection cn = ConexionDB.getConexion();
+             PreparedStatement ps = cn.prepareStatement(sql.toString())) {
+            int idx = 1;
+            if (q != null && !q.isBlank()) {
+                String like = "%" + q + "%";
+                ps.setString(idx++, like);
+                ps.setString(idx++, like);
+                ps.setString(idx++, like);
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getInt(1);
+            }
+        }
+        return 0;
     }
 
     public void insertar(Cliente c) throws SQLException {

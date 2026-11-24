@@ -38,12 +38,6 @@ public class CategoriaServlet extends HttpServlet {
                 request.getRequestDispatcher("/WEB-INF/vistas/categorias/formulario.jsp").forward(request, response);
                 return;
             }
-            if ("eliminar".equals(accion)) {
-                int id = Integer.parseInt(request.getParameter("id"));
-                dao.eliminar(id);
-                response.sendRedirect(request.getContextPath() + "/categorias");
-                return;
-            }
             List<Categoria> lista = dao.listar();
             request.setAttribute("lista", lista);
             request.getRequestDispatcher("/WEB-INF/vistas/categorias/lista.jsp").forward(request, response);
@@ -56,6 +50,21 @@ public class CategoriaServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
+        String accion = request.getParameter("accion");
+        if ("eliminar".equals(accion)) {
+            int id = Integer.parseInt(request.getParameter("id"));
+            try {
+                dao.eliminar(id);
+                request.getSession().setAttribute("flashTipo", "success");
+                request.getSession().setAttribute("flashTexto", "Categoría desactivada correctamente.");
+            } catch (SQLException e) {
+                getServletContext().log("Error al eliminar categoría", e);
+                request.getSession().setAttribute("flashTipo", "error");
+                request.getSession().setAttribute("flashTexto", "No se pudo desactivar: la categoría tiene registros asociados.");
+            }
+            response.sendRedirect(request.getContextPath() + "/categorias");
+            return;
+        }
         String idStr = request.getParameter("idCategoria");
         try {
             Categoria c = new Categoria();
@@ -65,13 +74,22 @@ public class CategoriaServlet extends HttpServlet {
             c.setActivo(request.getParameter("activo") != null);
             if (idStr == null || idStr.isBlank()) {
                 dao.insertar(c);
+                request.getSession().setAttribute("flashTipo", "success");
+                request.getSession().setAttribute("flashTexto", "Categoría creada correctamente.");
             } else {
                 c.setIdCategoria(Integer.parseInt(idStr));
                 dao.actualizar(c);
+                request.getSession().setAttribute("flashTipo", "success");
+                request.getSession().setAttribute("flashTexto", "Categoría actualizada correctamente.");
             }
-            response.sendRedirect(request.getContextPath() + "/categorias");
-        } catch (SQLException | NumberFormatException e) {
-            throw new ServletException(e);
+        } catch (SQLException e) {
+            getServletContext().log("Error al guardar categoría", e);
+            request.getSession().setAttribute("flashTipo", "error");
+            request.getSession().setAttribute("flashTexto", "No se pudo guardar la categoría.");
+        } catch (NumberFormatException e) {
+            request.getSession().setAttribute("flashTipo", "error");
+            request.getSession().setAttribute("flashTexto", "Datos inválidos.");
         }
+        response.sendRedirect(request.getContextPath() + "/categorias");
     }
 }

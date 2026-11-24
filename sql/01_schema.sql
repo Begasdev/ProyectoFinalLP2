@@ -1,4 +1,4 @@
-/* ============================================================
+﻿/* ============================================================
    Proyecto Final LP2 - Sistema Web de Gestión de Inventario y Punto de Venta
    Script de creación de base de datos y tablas
    Base de datos: ProyectoFinalLP2
@@ -12,6 +12,17 @@ END
 GO
 
 USE ProyectoFinalLP2;
+GO
+
+/* ---------- Eliminar tablas existentes (para re-ejecución) ---------- */
+-- Orden según claves foráneas: primero las dependientes.
+DROP TABLE IF EXISTS dbo.Producto;
+DROP TABLE IF EXISTS dbo.Categoria;
+DROP TABLE IF EXISTS dbo.UnidadMedida;
+DROP TABLE IF EXISTS dbo.Usuario;
+DROP TABLE IF EXISTS dbo.Rol;
+DROP TABLE IF EXISTS dbo.Cliente;
+DROP TABLE IF EXISTS dbo.Proveedor;
 GO
 
 /* ---------- Rol ---------- */

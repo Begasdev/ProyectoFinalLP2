@@ -33,12 +33,6 @@ public class UnidadMedidaServlet extends HttpServlet {
                 request.getRequestDispatcher("/WEB-INF/vistas/unidades/formulario.jsp").forward(request, response);
                 return;
             }
-            if ("eliminar".equals(accion)) {
-                int id = Integer.parseInt(request.getParameter("id"));
-                dao.eliminar(id);
-                response.sendRedirect(request.getContextPath() + "/unidades");
-                return;
-            }
             List<UnidadMedida> lista = dao.listar();
             request.setAttribute("lista", lista);
             request.getRequestDispatcher("/WEB-INF/vistas/unidades/lista.jsp").forward(request, response);
@@ -51,6 +45,21 @@ public class UnidadMedidaServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
+        String accion = request.getParameter("accion");
+        if ("eliminar".equals(accion)) {
+            int id = Integer.parseInt(request.getParameter("id"));
+            try {
+                dao.eliminar(id);
+                request.getSession().setAttribute("flashTipo", "success");
+                request.getSession().setAttribute("flashTexto", "Unidad desactivada correctamente.");
+            } catch (SQLException e) {
+                getServletContext().log("Error al eliminar unidad", e);
+                request.getSession().setAttribute("flashTipo", "error");
+                request.getSession().setAttribute("flashTexto", "No se pudo desactivar: la unidad tiene registros asociados.");
+            }
+            response.sendRedirect(request.getContextPath() + "/unidades");
+            return;
+        }
         String idStr = request.getParameter("idUnidadMedida");
         try {
             UnidadMedida u = new UnidadMedida();
@@ -59,13 +68,22 @@ public class UnidadMedidaServlet extends HttpServlet {
             u.setActivo(request.getParameter("activo") != null);
             if (idStr == null || idStr.isBlank()) {
                 dao.insertar(u);
+                request.getSession().setAttribute("flashTipo", "success");
+                request.getSession().setAttribute("flashTexto", "Unidad creada correctamente.");
             } else {
                 u.setIdUnidadMedida(Integer.parseInt(idStr));
                 dao.actualizar(u);
+                request.getSession().setAttribute("flashTipo", "success");
+                request.getSession().setAttribute("flashTexto", "Unidad actualizada correctamente.");
             }
-            response.sendRedirect(request.getContextPath() + "/unidades");
         } catch (SQLException e) {
-            throw new ServletException(e);
+            getServletContext().log("Error al guardar unidad", e);
+            request.getSession().setAttribute("flashTipo", "error");
+            request.getSession().setAttribute("flashTexto", "No se pudo guardar la unidad.");
+        } catch (NumberFormatException e) {
+            request.getSession().setAttribute("flashTipo", "error");
+            request.getSession().setAttribute("flashTexto", "Datos inválidos.");
         }
+        response.sendRedirect(request.getContextPath() + "/unidades");
     }
 }

@@ -33,14 +33,23 @@ public class ClienteServlet extends HttpServlet {
                 request.getRequestDispatcher("/WEB-INF/vistas/clientes/formulario.jsp").forward(request, response);
                 return;
             }
-            if ("eliminar".equals(accion)) {
-                int id = Integer.parseInt(request.getParameter("id"));
-                dao.eliminar(id);
-                response.sendRedirect(request.getContextPath() + "/clientes");
-                return;
-            }
-            List<Cliente> lista = dao.listar();
+
+            String q = request.getParameter("q");
+            int pagina = 1;
+            try { pagina = Integer.parseInt(request.getParameter("pagina")); } catch (NumberFormatException ignored) { }
+            if (pagina < 1) pagina = 1;
+            int tamano = 10;
+
+            List<Cliente> lista = dao.listar(q, pagina, tamano);
+            int total = dao.contar(q);
+            int totalPaginas = (int) Math.ceil((double) total / tamano);
+
             request.setAttribute("lista", lista);
+            request.setAttribute("total", total);
+            request.setAttribute("pagina", pagina);
+            request.setAttribute("tamano", tamano);
+            request.setAttribute("totalPaginas", totalPaginas);
+            request.setAttribute("q", q);
             request.getRequestDispatcher("/WEB-INF/vistas/clientes/lista.jsp").forward(request, response);
         } catch (SQLException | NumberFormatException e) {
             throw new ServletException(e);
@@ -51,6 +60,21 @@ public class ClienteServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
+        String accion = request.getParameter("accion");
+        if ("eliminar".equals(accion)) {
+            int id = Integer.parseInt(request.getParameter("id"));
+            try {
+                dao.eliminar(id);
+                request.getSession().setAttribute("flashTipo", "success");
+                request.getSession().setAttribute("flashTexto", "Cliente desactivado correctamente.");
+            } catch (SQLException e) {
+                getServletContext().log("Error al eliminar cliente", e);
+                request.getSession().setAttribute("flashTipo", "error");
+                request.getSession().setAttribute("flashTexto", "No se pudo desactivar: el cliente tiene registros asociados.");
+            }
+            response.sendRedirect(request.getContextPath() + "/clientes");
+            return;
+        }
         String idStr = request.getParameter("idCliente");
         try {
             Cliente c = new Cliente();
@@ -62,13 +86,22 @@ public class ClienteServlet extends HttpServlet {
             c.setActivo(request.getParameter("activo") != null);
             if (idStr == null || idStr.isBlank()) {
                 dao.insertar(c);
+                request.getSession().setAttribute("flashTipo", "success");
+                request.getSession().setAttribute("flashTexto", "Cliente creado correctamente.");
             } else {
                 c.setIdCliente(Integer.parseInt(idStr));
                 dao.actualizar(c);
+                request.getSession().setAttribute("flashTipo", "success");
+                request.getSession().setAttribute("flashTexto", "Cliente actualizado correctamente.");
             }
-            response.sendRedirect(request.getContextPath() + "/clientes");
-        } catch (SQLException | NumberFormatException e) {
-            throw new ServletException(e);
+        } catch (SQLException e) {
+            getServletContext().log("Error al guardar cliente", e);
+            request.getSession().setAttribute("flashTipo", "error");
+            request.getSession().setAttribute("flashTexto", "No se pudo guardar el cliente.");
+        } catch (NumberFormatException e) {
+            request.getSession().setAttribute("flashTipo", "error");
+            request.getSession().setAttribute("flashTexto", "Datos inválidos.");
         }
+        response.sendRedirect(request.getContextPath() + "/clientes");
     }
 }

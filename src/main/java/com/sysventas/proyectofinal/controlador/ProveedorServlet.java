@@ -33,14 +33,23 @@ public class ProveedorServlet extends HttpServlet {
                 request.getRequestDispatcher("/WEB-INF/vistas/proveedores/formulario.jsp").forward(request, response);
                 return;
             }
-            if ("eliminar".equals(accion)) {
-                int id = Integer.parseInt(request.getParameter("id"));
-                dao.eliminar(id);
-                response.sendRedirect(request.getContextPath() + "/proveedores");
-                return;
-            }
-            List<Proveedor> lista = dao.listar();
+
+            String q = request.getParameter("q");
+            int pagina = 1;
+            try { pagina = Integer.parseInt(request.getParameter("pagina")); } catch (NumberFormatException ignored) { }
+            if (pagina < 1) pagina = 1;
+            int tamano = 10;
+
+            List<Proveedor> lista = dao.listar(q, pagina, tamano);
+            int total = dao.contar(q);
+            int totalPaginas = (int) Math.ceil((double) total / tamano);
+
             request.setAttribute("lista", lista);
+            request.setAttribute("total", total);
+            request.setAttribute("pagina", pagina);
+            request.setAttribute("tamano", tamano);
+            request.setAttribute("totalPaginas", totalPaginas);
+            request.setAttribute("q", q);
             request.getRequestDispatcher("/WEB-INF/vistas/proveedores/lista.jsp").forward(request, response);
         } catch (SQLException | NumberFormatException e) {
             throw new ServletException(e);
@@ -51,6 +60,21 @@ public class ProveedorServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
+        String accion = request.getParameter("accion");
+        if ("eliminar".equals(accion)) {
+            int id = Integer.parseInt(request.getParameter("id"));
+            try {
+                dao.eliminar(id);
+                request.getSession().setAttribute("flashTipo", "success");
+                request.getSession().setAttribute("flashTexto", "Proveedor desactivado correctamente.");
+            } catch (SQLException e) {
+                getServletContext().log("Error al eliminar proveedor", e);
+                request.getSession().setAttribute("flashTipo", "error");
+                request.getSession().setAttribute("flashTexto", "No se pudo desactivar: el proveedor tiene registros asociados.");
+            }
+            response.sendRedirect(request.getContextPath() + "/proveedores");
+            return;
+        }
         String idStr = request.getParameter("idProveedor");
         try {
             Proveedor p = new Proveedor();
@@ -62,13 +86,22 @@ public class ProveedorServlet extends HttpServlet {
             p.setActivo(request.getParameter("activo") != null);
             if (idStr == null || idStr.isBlank()) {
                 dao.insertar(p);
+                request.getSession().setAttribute("flashTipo", "success");
+                request.getSession().setAttribute("flashTexto", "Proveedor creado correctamente.");
             } else {
                 p.setIdProveedor(Integer.parseInt(idStr));
                 dao.actualizar(p);
+                request.getSession().setAttribute("flashTipo", "success");
+                request.getSession().setAttribute("flashTexto", "Proveedor actualizado correctamente.");
             }
-            response.sendRedirect(request.getContextPath() + "/proveedores");
-        } catch (SQLException | NumberFormatException e) {
-            throw new ServletException(e);
+        } catch (SQLException e) {
+            getServletContext().log("Error al guardar proveedor", e);
+            request.getSession().setAttribute("flashTipo", "error");
+            request.getSession().setAttribute("flashTexto", "No se pudo guardar el proveedor.");
+        } catch (NumberFormatException e) {
+            request.getSession().setAttribute("flashTipo", "error");
+            request.getSession().setAttribute("flashTexto", "Datos inválidos.");
         }
+        response.sendRedirect(request.getContextPath() + "/proveedores");
     }
 }

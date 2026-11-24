@@ -38,8 +38,23 @@ public class CambioClaveServlet extends HttpServlet {
         Usuario u = (Usuario) sesion.getAttribute("usuario");
         String nueva = request.getParameter("nuevaClave");
         String confirma = request.getParameter("confirmarClave");
-        if (nueva == null || nueva.isBlank() || !nueva.equals(confirma)) {
-            request.setAttribute("error", "Las contraseñas no coinciden o están vacías.");
+        if (nueva == null || nueva.isBlank() || confirma == null || confirma.isBlank()) {
+            request.setAttribute("error", "Debes ingresar la nueva contraseña y su confirmación.");
+            request.getRequestDispatcher("/WEB-INF/vistas/cambioClave.jsp").forward(request, response);
+            return;
+        }
+        if (nueva.length() < 8) {
+            request.setAttribute("error", "La contraseña debe tener al menos 8 caracteres.");
+            request.getRequestDispatcher("/WEB-INF/vistas/cambioClave.jsp").forward(request, response);
+            return;
+        }
+        if (!nueva.equals(confirma)) {
+            request.setAttribute("error", "Las contraseñas no coinciden.");
+            request.getRequestDispatcher("/WEB-INF/vistas/cambioClave.jsp").forward(request, response);
+            return;
+        }
+        if (org.mindrot.jbcrypt.BCrypt.checkpw(nueva, u.getClave())) {
+            request.setAttribute("error", "La nueva contraseña no puede ser igual a la anterior.");
             request.getRequestDispatcher("/WEB-INF/vistas/cambioClave.jsp").forward(request, response);
             return;
         }

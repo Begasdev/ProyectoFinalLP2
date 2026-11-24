@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { width: 1920px; height: 1080px; overflow: hidden; background: #f5f5f7; font-family: sans-serif; }
+    #s6 { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 40px; }
+    .title-lg { font-size: 64px; font-weight: 700; color: #1d1d1f; }
+    .card-apple { background: #fff; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); padding: 24px; text-align: center; min-width: 180px; }
+  </style>
+</head>
+<body>
+  <div id="s6" data-composition-id="s6" data-start="0" data-duration="10" data-width="1920" data-height="1080">
+    <h1 class="title-lg">Tecnología</h1>
+    <div style="display:flex;gap:32px;flex-wrap:wrap;justify-content:center;">
+      <div class="card-apple" id="t1"><span style="font-size:48px;color:#0071e3;">☕</span><p style="margin-top:12px;font-weight:600;">Java 21</p></div>
+      <div class="card-apple" id="t2"><span style="font-size:48px;color:#0071e3;">🌐</span><p style="margin-top:12px;font-weight:600;">Servlet / JSP</p></div>
+      <div class="card-apple" id="t3"><span style="font-size:48px;color:#0071e3;">🖥️</span><p style="margin-top:12px;font-weight:600;">Tomcat 10.1</p></div>
+      <div class="card-apple" id="t4"><span style="font-size:48px;color:#0071e3;">🗄️</span><p style="margin-top:12px;font-weight:600;">SQL Server</p></div>
+      <div class="card-apple" id="t5"><span style="font-size:48px;color:#0071e3;">📦</span><p style="margin-top:12px;font-weight:600;">Maven</p></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:24px;margin-top:24px;">
+      <div class="card-apple" style="padding:16px 32px;" id="c1">model</div>
+      <span style="color:#0071e3;font-size:24px;" id="a1">→</span>
+      <div class="card-apple" style="padding:16px 32px;" id="c2">dao</div>
+      <span style="color:#0071e3;font-size:24px;" id="a2">→</span>
+      <div class="card-apple" style="padding:16px 32px;" id="c3">controlador</div>
+    </div>
+  </div>
+  <script>
+    window.__timelines = window.__timelines || {};
+    const tl = gsap.timeline({ paused: true });
+    tl.fromTo("#t1", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }, 1);
+    tl.fromTo("#t2", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }, 1.5);
+    tl.fromTo("#t3", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }, 2);
+    tl.fromTo("#t4", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }, 2.5);
+    tl.fromTo("#t5", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }, 3);
+    tl.fromTo("#c1", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power1.out" }, 5);
+    tl.fromTo("#a1", { opacity: 0, x: -10 }, { opacity: 1, x: 0, duration: 0.3, ease: "power1.out" }, 5.5);
+    tl.fromTo("#c2", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power1.out" }, 6);
+    tl.fromTo("#a2", { opacity: 0, x: -10 }, { opacity: 1, x: 0, duration: 0.3, ease: "power1.out" }, 6.5);
+    tl.fromTo("#c3", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power1.out" }, 7);
+    window.__timelines["s6"] = tl;
+    tl.seek(0);
+  </script>
+</body>
+</html>

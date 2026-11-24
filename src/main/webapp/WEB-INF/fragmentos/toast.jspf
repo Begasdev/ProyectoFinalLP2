@@ -1,0 +1,34 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%
+    String flashTipo = (String) session.getAttribute("flashTipo");
+    String flashTexto = (String) session.getAttribute("flashTexto");
+    if (flashTipo != null || flashTexto != null) {
+        session.removeAttribute("flashTipo");
+        session.removeAttribute("flashTexto");
+    }
+    if (flashTipo == null) flashTipo = "success";
+    if (flashTexto == null) flashTexto = "";
+%>
+<% if (flashTexto != null && !flashTexto.isBlank()) { %>
+<div class="position-fixed top-0 end-0 p-3" style="z-index: 1100;">
+    <div id="toastFlash" class="toast align-items-center text-bg-<%= "error".equals(flashTipo) ? "danger" : "success" %> border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                <i class="fa-solid <%= "error".equals(flashTipo) ? "fa-circle-exclamation" : "fa-circle-check" %> me-2"></i><c:out value="<%= flashTexto %>" />
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var toastEl = document.getElementById('toastFlash');
+        if (toastEl) {
+            var toast = new bootstrap.Toast(toastEl, { delay: 4000 });
+            toast.show();
+        }
+    });
+</script>
+<% } %>

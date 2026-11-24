@@ -1,13 +1,28 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <%@ page import="com.sysventas.proyectofinal.model.Usuario" %>
+<%@ page import="com.sysventas.proyectofinal.model.Producto" %>
+<%@ page import="java.util.List" %>
 <%
     Usuario u = (Usuario) session.getAttribute("usuario");
     if (u == null) { response.sendRedirect(request.getContextPath() + "/login"); return; }
+    String nombreCompleto = u.getNombreCompleto();
+    String primerNombre = "";
+    if (nombreCompleto != null && !nombreCompleto.trim().isEmpty()) {
+        primerNombre = nombreCompleto.trim().split("\\s+")[0];
+    }
     int nU = request.getAttribute("nUnidades") != null ? (Integer) request.getAttribute("nUnidades") : 0;
     int nC = request.getAttribute("nCategorias") != null ? (Integer) request.getAttribute("nCategorias") : 0;
     int nP = request.getAttribute("nProductos") != null ? (Integer) request.getAttribute("nProductos") : 0;
     int nCl = request.getAttribute("nClientes") != null ? (Integer) request.getAttribute("nClientes") : 0;
     int nPr = request.getAttribute("nProveedores") != null ? (Integer) request.getAttribute("nProveedores") : 0;
+    int stockBajo = request.getAttribute("stockBajo") != null ? (Integer) request.getAttribute("stockBajo") : 0;
+    int agotados = request.getAttribute("agotados") != null ? (Integer) request.getAttribute("agotados") : 0;
+    double valorInv = request.getAttribute("valorInventario") != null ? (Double) request.getAttribute("valorInventario") : 0.0;
+    List<Producto> menosStock = (List<Producto>) request.getAttribute("menosStock");
+    pageContext.setAttribute("seccion", "inicio");
+    pageContext.setAttribute("breadcrumb", "");
 %>
 <!DOCTYPE html>
 <html lang="es">
@@ -20,124 +35,139 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/estilos.css">
 </head>
 <body class="bg-apple">
-<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
-    <div class="container">
-        <a class="navbar-brand fw-bold text-primary" href="${pageContext.request.contextPath}/inicio">
-            <i class="fa-solid fa-cart-shopping me-2"></i>ProyectoFinalLP2
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="nav">
-            <ul class="navbar-nav ms-auto align-items-center">
-                <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/unidades"><i class="fa-solid fa-ruler me-1"></i>Unidades</a></li>
-                <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/categorias"><i class="fa-solid fa-tags me-1"></i>Categorías</a></li>
-                <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/productos"><i class="fa-solid fa-box me-1"></i>Productos</a></li>
-                <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/clientes"><i class="fa-solid fa-users me-1"></i>Clientes</a></li>
-                <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/proveedores"><i class="fa-solid fa-truck me-1"></i>Proveedores</a></li>
-                <li class="nav-item ms-3">
-                    <span class="text-muted small"><i class="fa-solid fa-user me-1"></i><%= u.getNombreCompleto() %></span>
-                </li>
-                <li class="nav-item ms-2">
-                    <a href="${pageContext.request.contextPath}/logout" class="btn btn-outline-danger btn-sm"><i class="fa-solid fa-right-from-bracket"></i></a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
+<%@ include file="/WEB-INF/fragmentos/navbar.jspf" %>
 
 <div class="container py-4">
     <div class="mb-4 fade-in">
-        <h1 class="fw-bold">Hola, <%= u.getNombreCompleto().split(" ")[0] %> <i class="fa-solid fa-hand-wave text-warning"></i></h1>
+        <h1 class="fw-bold">Hola, <c:out value="<%= primerNombre %>" /> <i class="fa-solid fa-hand text-warning"></i></h1>
         <p class="text-muted">Bienvenido a tu panel de control.</p>
     </div>
 
-    <div class="row g-4 mb-4">
-        <div class="col-md-4 col-lg-2">
-            <div class="card apple-card text-center p-3 fade-in">
-                <i class="fa-solid fa-ruler fa-2x text-primary mb-2"></i>
-                <h3 class="fw-bold mb-0"><%= nU %></h3>
-                <small class="text-muted">Unidades</small>
-            </div>
+    <!-- Fila 1: tarjetas por módulo -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-4 col-lg">
+            <a href="${pageContext.request.contextPath}/unidades" class="text-decoration-none">
+                <div class="card apple-card module-card p-3 text-center fade-in h-100">
+                    <i class="fa-solid fa-ruler fa-2x text-primary mb-2"></i>
+                    <h3 class="fw-bold mb-0"><%= nU %></h3>
+                    <small class="text-muted">Unidades</small>
+                </div>
+            </a>
         </div>
-        <div class="col-md-4 col-lg-2">
-            <div class="card apple-card text-center p-3 fade-in">
-                <i class="fa-solid fa-tags fa-2x text-success mb-2"></i>
-                <h3 class="fw-bold mb-0"><%= nC %></h3>
-                <small class="text-muted">Categorías</small>
-            </div>
+        <div class="col-6 col-md-4 col-lg">
+            <a href="${pageContext.request.contextPath}/categorias" class="text-decoration-none">
+                <div class="card apple-card module-card p-3 text-center fade-in h-100">
+                    <i class="fa-solid fa-tags fa-2x text-success mb-2"></i>
+                    <h3 class="fw-bold mb-0"><%= nC %></h3>
+                    <small class="text-muted">Categorías</small>
+                </div>
+            </a>
         </div>
-        <div class="col-md-4 col-lg-2">
-            <div class="card apple-card text-center p-3 fade-in">
-                <i class="fa-solid fa-box fa-2x text-warning mb-2"></i>
-                <h3 class="fw-bold mb-0"><%= nP %></h3>
-                <small class="text-muted">Productos</small>
-            </div>
+        <div class="col-6 col-md-4 col-lg">
+            <a href="${pageContext.request.contextPath}/productos" class="text-decoration-none">
+                <div class="card apple-card module-card p-3 text-center fade-in h-100">
+                    <i class="fa-solid fa-box fa-2x text-warning mb-2"></i>
+                    <h3 class="fw-bold mb-0"><%= nP %></h3>
+                    <small class="text-muted">Productos</small>
+                </div>
+            </a>
         </div>
-        <div class="col-md-4 col-lg-2">
-            <div class="card apple-card text-center p-3 fade-in">
-                <i class="fa-solid fa-users fa-2x text-info mb-2"></i>
-                <h3 class="fw-bold mb-0"><%= nCl %></h3>
-                <small class="text-muted">Clientes</small>
-            </div>
+        <div class="col-6 col-md-4 col-lg">
+            <a href="${pageContext.request.contextPath}/clientes" class="text-decoration-none">
+                <div class="card apple-card module-card p-3 text-center fade-in h-100">
+                    <i class="fa-solid fa-users fa-2x text-info mb-2"></i>
+                    <h3 class="fw-bold mb-0"><%= nCl %></h3>
+                    <small class="text-muted">Clientes</small>
+                </div>
+            </a>
         </div>
-        <div class="col-md-4 col-lg-2">
-            <div class="card apple-card text-center p-3 fade-in">
-                <i class="fa-solid fa-truck fa-2x text-danger mb-2"></i>
-                <h3 class="fw-bold mb-0"><%= nPr %></h3>
-                <small class="text-muted">Proveedores</small>
-            </div>
+        <div class="col-6 col-md-4 col-lg">
+            <a href="${pageContext.request.contextPath}/proveedores" class="text-decoration-none">
+                <div class="card apple-card module-card p-3 text-center fade-in h-100">
+                    <i class="fa-solid fa-truck fa-2x text-danger mb-2"></i>
+                    <h3 class="fw-bold mb-0"><%= nPr %></h3>
+                    <small class="text-muted">Proveedores</small>
+                </div>
+            </a>
         </div>
     </div>
 
-    <h4 class="mb-3">Módulos</h4>
-    <div class="row g-3">
+    <!-- Fila 2: indicadores de negocio -->
+    <div class="row g-3 mb-4">
         <div class="col-md-4">
-            <a href="${pageContext.request.contextPath}/unidades" class="text-decoration-none">
-                <div class="card apple-card module-card p-4 fade-in">
-                    <i class="fa-solid fa-ruler fa-2x text-primary mb-2"></i>
-                    <h5 class="fw-bold">Unidades de medida</h5>
-                    <p class="text-muted small mb-0">Gestiona las unidades de medida de los productos.</p>
+            <a href="${pageContext.request.contextPath}/productos" class="text-decoration-none">
+                <div class="card apple-card p-4 fade-in h-100 <%= stockBajo > 0 ? "border border-warning" : "" %>">
+                    <div class="d-flex align-items-center">
+                        <i class="fa-solid fa-triangle-exclamation fa-2x <%= stockBajo > 0 ? "text-warning" : "text-muted" %> me-3"></i>
+                        <div>
+                            <h3 class="fw-bold mb-0 <%= stockBajo > 0 ? "text-warning" : "" %>"><%= stockBajo %></h3>
+                            <small class="text-muted">Productos con stock bajo</small>
+                        </div>
+                    </div>
                 </div>
             </a>
         </div>
         <div class="col-md-4">
-            <a href="${pageContext.request.contextPath}/categorias" class="text-decoration-none">
-                <div class="card apple-card module-card p-4 fade-in">
-                    <i class="fa-solid fa-tags fa-2x text-success mb-2"></i>
-                    <h5 class="fw-bold">Categorías</h5>
-                    <p class="text-muted small mb-0">Organiza los productos por categorías.</p>
+            <div class="card apple-card p-4 fade-in h-100">
+                <div class="d-flex align-items-center">
+                    <i class="fa-solid fa-coins fa-2x text-success me-3"></i>
+                    <div>
+                        <h3 class="fw-bold mb-0"><fmt:formatNumber value="<%= valorInv %>" type="currency" currencySymbol="$" minFractionDigits="2" maxFractionDigits="2" /></h3>
+                        <small class="text-muted">Valor del inventario</small>
+                    </div>
                 </div>
-            </a>
+            </div>
         </div>
         <div class="col-md-4">
             <a href="${pageContext.request.contextPath}/productos" class="text-decoration-none">
-                <div class="card apple-card module-card p-4 fade-in">
-                    <i class="fa-solid fa-box fa-2x text-warning mb-2"></i>
-                    <h5 class="fw-bold">Productos</h5>
-                    <p class="text-muted small mb-0">Inventario y precios de productos.</p>
-                </div>
-            </a>
-        </div>
-        <div class="col-md-4">
-            <a href="${pageContext.request.contextPath}/clientes" class="text-decoration-none">
-                <div class="card apple-card module-card p-4 fade-in">
-                    <i class="fa-solid fa-users fa-2x text-info mb-2"></i>
-                    <h5 class="fw-bold">Clientes</h5>
-                    <p class="text-muted small mb-0">Administración de clientes.</p>
-                </div>
-            </a>
-        </div>
-        <div class="col-md-4">
-            <a href="${pageContext.request.contextPath}/proveedores" class="text-decoration-none">
-                <div class="card apple-card module-card p-4 fade-in">
-                    <i class="fa-solid fa-truck fa-2x text-danger mb-2"></i>
-                    <h5 class="fw-bold">Proveedores</h5>
-                    <p class="text-muted small mb-0">Administración de proveedores.</p>
+                <div class="card apple-card p-4 fade-in h-100 <%= agotados > 0 ? "border border-danger" : "" %>">
+                    <div class="d-flex align-items-center">
+                        <i class="fa-solid fa-ban fa-2x <%= agotados > 0 ? "text-danger" : "text-muted" %> me-3"></i>
+                        <div>
+                            <h3 class="fw-bold mb-0 <%= agotados > 0 ? "text-danger" : "" %>"><%= agotados %></h3>
+                            <small class="text-muted">Productos agotados</small>
+                        </div>
+                    </div>
                 </div>
             </a>
         </div>
     </div>
+
+    <!-- Tabla: 5 productos con menos stock -->
+    <h4 class="mb-3">Productos con menos stock</h4>
+    <% if (menosStock == null || menosStock.isEmpty()) { %>
+    <p class="text-muted">No hay productos registrados.</p>
+    <% } else { %>
+    <div class="card apple-card">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead><tr><th>Código</th><th>Descripción</th><th class="text-end">Cantidad</th><th class="text-end">Acción</th></tr></thead>
+                    <tbody>
+                    <% for (Producto p : menosStock) { %>
+                    <tr>
+                        <td class="text-muted font-monospace"><%= p.getCodigo() %></td>
+                        <td class="fw-medium"><c:out value="<%= p.getDescripcion() %>" /></td>
+                        <td class="text-end">
+                            <% if (p.getCantidad() == 0) { %>
+                            <span class="badge bg-danger">Agotado</span>
+                            <% } else if (p.getCantidad() <= com.sysventas.proyectofinal.controlador.ProductoServlet.STOCK_MINIMO) { %>
+                            <span class="badge bg-warning text-dark"><%= p.getCantidad() %></span>
+                            <% } else { %>
+                            <%= p.getCantidad() %>
+                            <% } %>
+                        </td>
+                        <td class="text-end">
+                            <a href="${pageContext.request.contextPath}/productos?accion=editar&id=<%= p.getIdProducto() %>" class="btn btn-sm btn-outline-warning" title="Editar <%= p.getDescripcion() %>" aria-label="Editar <%= p.getDescripcion() %>"><i class="fa-solid fa-pen"></i></a>
+                        </td>
+                    </tr>
+                    <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <% } %>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

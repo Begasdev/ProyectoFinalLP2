@@ -5,3 +5,9 @@ node_modules/
 Thumbs.db
 
 target/
+
+mejoraclaude/
+
+video/node_modules
+video/out
+video/renders
