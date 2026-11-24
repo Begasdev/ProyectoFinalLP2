@@ -27,7 +27,6 @@ public class ConexionDB {
         System.out.println(" VERIFICACION DE CONEXION SQL SERVER ");
         System.out.println("------------------------------------------");
         System.out.println("DB_URL: " + (url != null && !url.isBlank() ? "OK" : "FALTA"));
-        System.out.println("URL USADA: " + url);
         System.out.println("DB_USER: " + (usr != null && !usr.isBlank() ? "OK" : "FALTA"));
         System.out.println("DB_PASSWORD: " + (pwd != null && !pwd.isBlank() ? "OK" : "FALTA"));
 
