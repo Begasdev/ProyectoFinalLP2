@@ -48,7 +48,7 @@
 
 <div class="container py-4">
     <div class="mb-4 fade-in">
-        <h1 class="fw-bold">Hola, <%= u.getNombreCompleto().split(" ")[0] %> 👋</h1>
+        <h1 class="fw-bold">Hola, <%= u.getNombreCompleto().split(" ")[0] %> <i class="fa-solid fa-hand-wave text-warning"></i></h1>
         <p class="text-muted">Bienvenido a tu panel de control.</p>
     </div>
 
