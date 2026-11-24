@@ -6,32 +6,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ProyectoFinalLP2 - Iniciar sesión</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/estilos.css">
 </head>
-<body class="bg-light">
+<body class="bg-apple d-flex align-items-center" style="min-height:100vh;">
 <div class="container">
-    <div class="row justify-content-center mt-5">
-        <div class="col-md-5">
-            <div class="card shadow">
-                <div class="card-body p-4">
-                    <h3 class="text-center mb-3">ProyectoFinalLP2</h3>
-                    <p class="text-center text-muted">Sistema de Gestión de Inventario</p>
-                    <% if (request.getAttribute("error") != null) { %>
-                    <div class="alert alert-danger"><%= request.getAttribute("error") %></div>
-                    <% } %>
-                    <form action="${pageContext.request.contextPath}/login" method="post">
-                        <div class="mb-3">
-                            <label class="form-label">Usuario</label>
-                            <input type="text" name="nombreUsuario" class="form-control" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Contraseña</label>
-                            <input type="password" name="clave" class="form-control" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100">Ingresar</button>
-                    </form>
-                </div>
+    <div class="row justify-content-center">
+        <div class="col-md-5 col-lg-4">
+            <div class="text-center mb-4 fade-in">
+                <i class="fa-solid fa-cart-shopping fa-3x text-primary"></i>
+                <h2 class="fw-bold mt-2">ProyectoFinalLP2</h2>
+                <p class="text-muted">Sistema de Gestión de Inventario</p>
             </div>
+            <div class="card apple-card p-4 fade-in">
+                <% if (request.getAttribute("error") != null) { %>
+                <div class="alert alert-danger"><i class="fa-solid fa-circle-exclamation me-2"></i><%= request.getAttribute("error") %></div>
+                <% } %>
+                <form action="${pageContext.request.contextPath}/login" method="post">
+                    <div class="mb-3">
+                        <label class="form-label fw-medium">Usuario</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-white"><i class="fa-solid fa-user text-muted"></i></span>
+                            <input type="text" name="nombreUsuario" class="form-control" placeholder="Ingresa tu usuario" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-medium">Contraseña</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-white"><i class="fa-solid fa-lock text-muted"></i></span>
+                            <input type="password" name="clave" class="form-control" placeholder="Ingresa tu contraseña" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 py-2 mt-2">
+                        <i class="fa-solid fa-right-to-bracket me-2"></i>Ingresar
+                    </button>
+                </form>
+            </div>
+            <p class="text-center text-muted small mt-3">© 2026 ProyectoFinalLP2</p>
         </div>
     </div>
 </div>

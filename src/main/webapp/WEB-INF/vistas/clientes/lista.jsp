@@ -11,35 +11,52 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clientes</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/estilos.css">
 </head>
-<body>
-<nav class="navbar navbar-dark bg-primary mb-4"><div class="container"><a class="navbar-brand" href="${pageContext.request.contextPath}/inicio">ProyectoFinalLP2</a></div></nav>
-<div class="container">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2>Clientes</h2>
-        <a href="${pageContext.request.contextPath}/clientes?accion=nuevo" class="btn btn-success">Nuevo cliente</a>
+<body class="bg-apple">
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+    <div class="container">
+        <a class="navbar-brand fw-bold text-primary" href="${pageContext.request.contextPath}/inicio"><i class="fa-solid fa-cart-shopping me-2"></i>ProyectoFinalLP2</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/inicio"><i class="fa-solid fa-house me-1"></i>Inicio</a></li>
+            </ul>
+        </div>
     </div>
-    <table class="table table-striped table-hover">
-        <thead class="table-primary"><tr><th>ID</th><th>Nombre</th><th>Apellido</th><th>Teléfono</th><th>Email</th><th>Dirección</th><th>Activo</th><th>Acciones</th></tr></thead>
-        <tbody>
-        <% if (lista != null) for (Cliente c : lista) { %>
-        <tr>
-            <td><%= c.getIdCliente() %></td>
-            <td><%= c.getNombre() %></td>
-            <td><%= c.getApellido() %></td>
-            <td><%= c.getTelefono() %></td>
-            <td><%= c.getEmail() %></td>
-            <td><%= c.getDireccion() %></td>
-            <td><%= c.isActivo() ? "Sí" : "No" %></td>
-            <td>
-                <a href="${pageContext.request.contextPath}/clientes?accion=editar&id=<%= c.getIdCliente() %>" class="btn btn-sm btn-warning">Editar</a>
-                <a href="${pageContext.request.contextPath}/clientes?accion=eliminar&id=<%= c.getIdCliente() %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Desactivar?')">Eliminar</a>
-            </td>
-        </tr>
-        <% } %>
-        </tbody>
-    </table>
-    <a href="${pageContext.request.contextPath}/inicio" class="btn btn-secondary">Menú</a>
+</nav>
+<div class="container py-4 fade-in">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold"><i class="fa-solid fa-users me-2 text-info"></i>Clientes</h2>
+        <a href="${pageContext.request.contextPath}/clientes?accion=nuevo" class="btn btn-primary"><i class="fa-solid fa-plus me-2"></i>Nuevo</a>
+    </div>
+    <div class="card apple-card">
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0">
+                <thead><tr><th>ID</th><th>Nombre</th><th>Apellido</th><th>Teléfono</th><th>Email</th><th>Dirección</th><th>Activo</th><th class="text-end">Acciones</th></tr></thead>
+                <tbody>
+                <% if (lista != null) for (Cliente c : lista) { %>
+                <tr>
+                    <td><%= c.getIdCliente() %></td>
+                    <td class="fw-medium"><%= c.getNombre() %></td>
+                    <td><%= c.getApellido() %></td>
+                    <td><i class="fa-solid fa-phone text-muted me-1"></i><%= c.getTelefono() %></td>
+                    <td><i class="fa-solid fa-envelope text-muted me-1"></i><%= c.getEmail() %></td>
+                    <td class="text-muted small"><%= c.getDireccion() %></td>
+                    <td><%= c.isActivo() ? "<span class='badge bg-success'>Sí</span>" : "<span class='badge bg-secondary'>No</span>" %></td>
+                    <td class="text-end">
+                        <a href="${pageContext.request.contextPath}/clientes?accion=editar&id=<%= c.getIdCliente() %>" class="btn btn-sm btn-outline-warning"><i class="fa-solid fa-pen"></i></a>
+                        <a href="${pageContext.request.contextPath}/clientes?accion=eliminar&id=<%= c.getIdCliente() %>" class="btn btn-sm btn-outline-danger" onclick="return confirm('¿Desactivar?')"><i class="fa-solid fa-trash"></i></a>
+                    </td>
+                </tr>
+                <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="mt-3">
+        <a href="${pageContext.request.contextPath}/inicio" class="btn btn-outline-secondary"><i class="fa-solid fa-arrow-left me-2"></i>Menú</a>
+    </div>
 </div>
 </body>
 </html>

@@ -11,30 +11,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Unidad de medida</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/estilos.css">
 </head>
-<body>
-<nav class="navbar navbar-dark bg-primary mb-4"><div class="container"><a class="navbar-brand" href="${pageContext.request.contextPath}/inicio">ProyectoFinalLP2</a></div></nav>
-<div class="container">
-    <h2><%= esEdicion ? "Editar" : "Nueva" %> unidad de medida</h2>
-    <form action="${pageContext.request.contextPath}/unidades" method="post" class="mt-3">
-        <% if (esEdicion) { %>
-        <input type="hidden" name="idUnidadMedida" value="<%= u.getIdUnidadMedida() %>">
-        <% } %>
-        <div class="mb-3">
-            <label class="form-label">Nombre</label>
-            <input type="text" name="nombre" class="form-control" value="<%= esEdicion ? u.getNombre() : "" %>" required>
+<body class="bg-apple">
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+    <div class="container">
+        <a class="navbar-brand fw-bold text-primary" href="${pageContext.request.contextPath}/inicio"><i class="fa-solid fa-cart-shopping me-2"></i>ProyectoFinalLP2</a>
+    </div>
+</nav>
+<div class="container py-4 fade-in">
+    <h2 class="fw-bold mb-4"><i class="fa-solid fa-ruler me-2 text-primary"></i><%= esEdicion ? "Editar" : "Nueva" %> unidad de medida</h2>
+    <div class="card apple-card" style="max-width:600px;">
+        <div class="card-body">
+            <form action="${pageContext.request.contextPath}/unidades" method="post">
+                <% if (esEdicion) { %>
+                <input type="hidden" name="idUnidadMedida" value="<%= u.getIdUnidadMedida() %>">
+                <% } %>
+                <div class="mb-3">
+                    <label class="form-label fw-medium">Nombre</label>
+                    <input type="text" name="nombre" class="form-control" value="<%= esEdicion ? u.getNombre() : "" %>" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-medium">Abreviatura</label>
+                    <input type="text" name="abreviatura" class="form-control" value="<%= esEdicion ? u.getAbreviatura() : "" %>" required>
+                </div>
+                <div class="form-check mb-3">
+                    <input type="checkbox" name="activo" class="form-check-input" id="activo" <%= (esEdicion && u.isActivo()) || !esEdicion ? "checked" : "" %>>
+                    <label class="form-check-label" for="activo">Activo</label>
+                </div>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk me-2"></i>Guardar</button>
+                    <a href="${pageContext.request.contextPath}/unidades" class="btn btn-outline-secondary"><i class="fa-solid fa-xmark me-2"></i>Cancelar</a>
+                </div>
+            </form>
         </div>
-        <div class="mb-3">
-            <label class="form-label">Abreviatura</label>
-            <input type="text" name="abreviatura" class="form-control" value="<%= esEdicion ? u.getAbreviatura() : "" %>" required>
-        </div>
-        <div class="form-check mb-3">
-            <input type="checkbox" name="activo" class="form-check-input" id="activo" <%= (esEdicion && u.isActivo()) || !esEdicion ? "checked" : "" %>>
-            <label class="form-check-label" for="activo">Activo</label>
-        </div>
-        <button type="submit" class="btn btn-primary">Guardar</button>
-        <a href="${pageContext.request.contextPath}/unidades" class="btn btn-secondary">Cancelar</a>
-    </form>
+    </div>
 </div>
 </body>
 </html>
